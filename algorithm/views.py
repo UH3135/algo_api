@@ -24,7 +24,7 @@ class QuestionListView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def delete(self, request, id):
+    def delete(self, id):
         _question = Question.objects.get(id=id)
         _question.delete()
         return Response({"message": "Successfully delete question"}, status=status.HTTP_200_OK)
@@ -40,3 +40,19 @@ class QuestionListView(APIView):
         _question.save()
 
         return Response({'message': "Successfully update question"}, status=status.HTTP_200_OK)
+
+
+class AnswerListView(APIView):
+    def get(self, request):
+        _answer_list = Answer.objects.all()
+        serializer = AnswerSerializer(_answer_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        serializer = AnswerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "successfully create answer"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
